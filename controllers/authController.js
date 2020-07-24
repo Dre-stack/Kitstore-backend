@@ -217,6 +217,7 @@ exports.handleForgotPassword = catchAsync(async (req, res, next) => {
   }
   res.status(201).json({ status: 'success' });
 });
+
 exports.resetUserPassword = catchAsync(async (req, res, next) => {
   const { token } = req.params;
 
