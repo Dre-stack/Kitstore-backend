@@ -30,7 +30,7 @@ router.route('/me').get(protectRoute, (req, res) =>
   })
 );
 router.post('/forgot-password', handleForgotPassword);
-router.post('/change-password', protectRoute, updateUserPassword);
+router.patch('/change-password', protectRoute, updateUserPassword);
 router.post('/reset-password/:token', resetUserPassword);
 router.post('/new-address', protectRoute, addNewAddress);
 router
