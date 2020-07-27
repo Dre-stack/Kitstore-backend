@@ -14,10 +14,7 @@ const app = require('./app');
 
 // DATABASE
 
-const DB = process.env.DATABASE.replace(
-  '<password>',
-  process.env.DATABASE_PASSWORD
-);
+const DB = process.env.DATABASE;
 
 // const DB =
 //   'mongodb+srv://bigdre:8wssIQH5iqHvJtoZ@cluster0-ih3vd.mongodb.net/kitstore?retryWrites=true&w=majority';
