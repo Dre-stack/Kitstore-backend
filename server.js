@@ -32,7 +32,7 @@ const dbconnection = mongoose
 //Server
 const port = process.env.PORT || 8000;
 const server = app.listen(port, () =>
-  console.log(`app running at port: ${port}`)
+  console.log(`Server running at port: ${port}`)
 );
 
 // Unhandles rejection.
