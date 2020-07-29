@@ -95,14 +95,12 @@ exports.signin = catchAsync(async (req, res, next) => {
     !user ||
     !(await user.comparePassword(password, user.password))
   ) {
-    console.log('no user available');
-    return res.status(401).json({ message: 'wrong password' });
-    // return next(
-    //   new AppError(
-    //     'incorrect email or password please try again',
-    //     401
-    //   )
-    // );
+    return next(
+      new AppError(
+        'incorrect email or password please try again',
+        401
+      )
+    );
   }
   const token = signToken(user._id);
 
