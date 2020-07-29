@@ -95,6 +95,7 @@ exports.signin = catchAsync(async (req, res, next) => {
     !user ||
     !(await user.comparePassword(password, user.password))
   ) {
+    console.log('no user available');
     return next(
       new AppError(
         'incorrect email or password please try again',
