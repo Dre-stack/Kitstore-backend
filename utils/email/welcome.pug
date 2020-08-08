@@ -1,0 +1,17 @@
+extends baseEmail
+
+block content
+  p Hi #{firstname},
+  p Welcome to Kit Store, we're glad to have you in the Royal family 🎉🙏
+  p Start Shopping from a wide range of exlusive KIT Merch!
+  table.btn.btn-primary(role='presentation', border='0', cellpadding='0', cellspacing='0')
+    tbody
+      tr
+        td(align='left')
+          table(role='presentation', border='0', cellpadding='0', cellspacing='0')
+            tbody
+              tr
+                td
+                  a(href=`${url}`, target='_blank') Shop Now
+  p If you need any help at ll, please don't hesitate to contact us!
+  

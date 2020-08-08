@@ -3,13 +3,13 @@ const crypto = require('crypto');
 const { promisify } = require('util');
 const multer = require('multer');
 const sharp = require('sharp');
-const sgMail = require('@sendgrid/mail');
+
+const Email = require('../utils/Email');
 
 const User = require('../models/User');
 const catchAsync = require('../utils/catchAsyncErrors');
 const AppError = require('../utils/appError');
 
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 // const multerStorage = multer.diskStorage({
 //   destination: (req, file, cb) => {
 //     cb(null, './public/img/users');
@@ -78,6 +78,13 @@ const signToken = (id) => {
 exports.signup = catchAsync(async (req, res) => {
   const newUser = await User.create(req.body);
   newUser.password = undefined;
+  const url = `${req.protocol}://${req.get('host')}/shop`;
+  const email = new Email(newUser, url);
+  try {
+    await email.sendWelcome();
+  } catch (error) {
+    console.log(error);
+  }
   const token = signToken(newUser._id);
 
   res.status(201).json({
@@ -201,19 +208,20 @@ exports.handleForgotPassword = catchAsync(async (req, res, next) => {
   const token = user.createPasswordResetToken();
   await user.save({ validateBeforeSave: false });
 
-  const resetUrl = `${req.protocol}://localhost:3000/user/reset-password/${token}`;
-
-  const msg = {
-    to: user.email,
-    from: 'damiflo94@gmail.com',
-    subject: 'Forgot Your Password?',
-    text: 'forgot your email??',
-    html: `<div>${resetUrl}</div>`,
-  };
+  const resetUrl = `${req.protocol}://${req.get(
+    'host'
+  )}/user/reset-password/${token}`;
+  const email = new Email(user, resetUrl);
   try {
-    await sgMail.send(msg);
+    await email.sendPasswordReset();
   } catch (err) {
     console.log(err);
+    return next(
+      new AppError(
+        'There was an error sending email, please try again or contact us if this error persists',
+        500
+      )
+    );
   }
   res.status(201).json({ status: 'success' });
 });
