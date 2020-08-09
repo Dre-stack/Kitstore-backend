@@ -1,37 +1,36 @@
 const { Order } = require('../models/Order');
-const User = require('../models/User');
+// const User = require('../models/User');
 const catchAsync = require('../utils/catchAsyncErrors');
-const sgMail = require('@sendgrid/mail');
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+const Email = require('../utils/Email');
 
 exports.createOrder = catchAsync(async (req, res) => {
   req.body.user = req.user._id;
-  await Order.create(req.body);
-  const msg = {
-    to: req.user.email,
-    from: 'damiflo94@gmail.com',
-    subject: 'New Order',
-    text: `Thank You for the new order your transaction id is ${req.body.transactionid}`,
-    html: `<h3>Total amount : ${req.body.amount}<h3>`,
-  };
+  const newOrder = await Order.create(req.body);
+  // console.log(newOrder);
+
+  ///send new order email to user
+  url = `${req.protocol}://${req.get('host')}/user/purchase-history`;
+  const email = new Email(req.user, url);
   try {
-    await sgMail.send(msg);
+    await email.sendNewOrder(newOrder);
   } catch (err) {
     console.log(err);
   }
-
+  ////response
   res.status(200).send('success');
 });
 
 exports.getUserOrderHistory = catchAsync(async (req, res) => {
   const id = req.user._id;
 
-  const orderhistory = await Order.find({ user: id });
+  const orderhistory = await Order.find({ user: id }).sort(
+    '-createdAt'
+  );
   res.status(201).json(orderhistory);
 });
 
 exports.getAllOrders = catchAsync(async (req, res) => {
-  const orders = await Order.find();
+  const orders = await Order.find().sort('-createdAt');
   res.status(201).json({ orders });
 });
 

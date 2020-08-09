@@ -259,6 +259,17 @@ exports.resetUserPassword = catchAsync(async (req, res, next) => {
   await user.save();
   const jwt = signToken(user._id);
 
+  ///send email to user
+  const url = `${req.protocol}://${req.get('host')}/shop`;
+
+  const email = new Email(user, url);
+
+  try {
+    await email.sendPasswordChanged();
+  } catch (err) {
+    console.log(error);
+  }
+
   res.status(201).json({ jwt });
 });
 
@@ -281,6 +292,18 @@ exports.updateUserPassword = catchAsync(async (req, res, next) => {
   user.confirmPassword = req.body.confirmPassword;
   await user.save();
   // User.findByIdAndUpdate will NOT work as intended!
+
+  //send Email to user
+
+  const url = `${req.protocol}://${req.get('host')}/shop`;
+
+  const email = new Email(user, url);
+
+  try {
+    await email.sendPasswordChanged();
+  } catch (err) {
+    console.log(error);
+  }
 
   // 4) Log user in, send JWT
   res.status(201).json({ status: 'success' });

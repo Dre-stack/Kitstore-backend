@@ -20,13 +20,16 @@ module.exports = class Email {
     });
   }
 
-  async send(template, subject) {
+  async send(template, subject, order) {
     const html = pug.renderFile(
       `${__dirname}/email/${template}.pug`,
       {
         firstname: this.firstname,
         subject,
         url: this.url,
+        total: order ? order.amount : '',
+        status: order ? order.status : '',
+        id: order ? order.transactionid : '',
       }
     );
 
@@ -47,6 +50,17 @@ module.exports = class Email {
 
   async sendPasswordReset() {
     await this.send('passwordReset', 'Forgot your password?');
+  }
+  async sendPasswordChanged() {
+    console.log('password changed called');
+    await this.send(
+      'passwordChanged',
+      'You Just Changed Your Password'
+    );
+  }
+
+  async sendNewOrder(order) {
+    await this.send('newOrder', 'Thank you for your order!', order);
   }
 };
 
@@ -77,3 +91,26 @@ module.exports = class Email {
 //   };
 //   await transporter.sendMail(mailOptions);
 // };
+
+// async function  sendOrderEmail(order, template, subject) {
+//     const html = pug.renderFile(
+//       `${__dirname}/email/${template}.pug`,
+//       {
+//         firstname: this.firstname,
+//         subject,
+//         url: this.url,
+//         total: order.amount,
+//         status: order.status,
+//         id: order.transactionid,
+//       }
+//     );
+//     const mailOptions = {
+//       from: this.from,
+//       to: this.to,
+//       subject,
+//       html,
+//       text: htmlToText.fromString(html),
+//     };
+
+//     await this.newTransport().sendMail(mailOptions);
+//   }

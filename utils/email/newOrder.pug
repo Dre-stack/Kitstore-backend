@@ -1,0 +1,22 @@
+extends baseEmail
+
+block content
+  p Hi #{firstname},
+  p Your order with order ID: #{id}, has been received and currently been processed by our team 🎉🙏
+  p We will update you as soon as we have more news.
+  p Order Summary
+  p Order ID:         #{id}
+  p Order Total:      $#{total}
+  p Order Status:     #{status}
+  p Please click the button below to view your full order details
+  table.btn.btn-primary(role='presentation', border='0', cellpadding='0', cellspacing='0')
+    tbody
+      tr
+        td(align='left')
+          table(role='presentation', border='0', cellpadding='0', cellspacing='0')
+            tbody
+              tr
+                td
+                  a(href=`${url}`, target='_blank') My Orders
+  p If you need any help at ll, please don't hesitate to contact us!
+  p Thank You  🤩
